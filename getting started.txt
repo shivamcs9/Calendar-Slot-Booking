@@ -1,0 +1,76 @@
+Setup the Google Cloud Project:
+
+    Go to Google Cloud Platform Console
+    Sign in and create an API Project
+    Enable the Google Calendar API
+    Create a Service Account (for the backend)
+        Go to Service Accounts
+        Choose Create Service Account
+        Enter an ID and confirm
+        Take note of your Service Account's email address
+        Create a key-pair credentials for your new service account, in JSON format
+        Download the credentials and store the Credentials (one of):
+            Encode it as Base64 and set an Environment Variable called GOOGLE_CREDENTIALS with the value
+            Or save it on backend module's resources under src/main/resources with name google_client_secrets.json.
+    Create an OAuth Client ID
+        Go to Credentials
+        Choose Create Credentials and pick OAuth Client ID
+        Pick Web Application
+        In allowed origins section add this for dev localhost server:
+            http://localhost:8081 for backend dev server
+            http://localhost:8088 for frontend dev server (optional)
+            (your production servers here)
+        Confirm it. You can let allowed redirect URIs empty. We will be using Google's own sign in.
+        Take note of your OAuth Client ID
+        Store the Client Id (one of):
+            Set an Environment Variable called GOOGLE_CLIENT_ID with the value
+            Save it on model module's root under with name google_client_id.txt.
+            Or replace the buildConfigField:API_CLIENT_ID value on model module's build.gradle.kts file.
+    Create a new (Google Calendar)[https://calendar.google.com/calendar/r/settings/createcalendar]
+        Share it with the Service Account's email address you just created. This will make it available at the app
+        Make sure it has write access to the Calendar's events when you share it
+    Run the backend or the webapp-bundle module to check if everything is working as expected.
+
+If succeed, you should see something like this at http://localhost:8081/api/agendas:
+
+[
+  {
+    "id": "fsltp4vi7lcgugho31rdlc56no@group.calendar.google.com",
+    "name": "Beneficios (prueba)",
+    "description": "Calendario de prueba para la app de citas",
+    "foregroundColor": "#000000",
+    "backgroundColor": "#a47ae2",
+    "available": true
+  },
+  {
+    "id": "fpjlv6afhup6s03v5gt3ljgd74@group.calendar.google.com",
+    "name": "Masajes (prueba)",
+    "description": "Beneficio de masajes",
+    "foregroundColor": "#000000",
+    "backgroundColor": "#a47ae2",
+    "available": true
+  }
+]
+
+I encourge you to create new calendars from https://calendar.google.com and add some test events on it!
+Running the backend
+
+./gradlew backend:run
+
+Once running:
+
+    visit https://petstore.swagger.io/?url=http://localhost:8081/api/openapi.json to explore the API
+
+Running the frontend (as standalone, for dev purposes)
+
+./gradlew frontend:run -t -PapiEndpoint=http://localhost:8081/api
+
+Once running, visit http://localhost:8088/ to open the app
+Running the whole webapp (frontend and backend)
+
+./gradlew webapp-bundle:run
+
+Once running:
+
+    visit http://localhost:8081 to open the app
+    visit https://petstore.swagger.io/?url=http://localhost:8081/api/openapi.json to explore the API
